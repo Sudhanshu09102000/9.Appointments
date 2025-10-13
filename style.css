@@ -1,0 +1,21 @@
+body {
+  background-color: #f8f9fa;
+}
+
+#question-container {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.option {
+  margin-bottom: 10px;
+}
+
+.explanation-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
