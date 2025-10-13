@@ -1,7 +1,4 @@
-const totalQuestions = 47;   // total appointments extracted
-let currentQuestion = 1;
-const answers = {};
-let totalSeconds = 0;
+
 
 const questions = {
   1: {
@@ -242,77 +239,52 @@ const questions = {
 };
 
 const explanations = {
-  1: "Gyanendra Pratap Singh was appointed as DG of CRPF, the largest CAPF of India.",
-  2: "Vineet Joshi has become the new Chairman of CBSE.",
-  3: "Manish Singhal appointed as Secretary General of ASSOCHAM.",
-  4: "Devarjit Saikia appointed as BCCI Secretary. BCCI was founded in 1928.",
-  5: "Ajay Seth appointed as Finance Secretary.",
-  6: "Ayushmann Khurrana named Fit India Icon by Union Sports Minister.",
-  7: "Bahadur Singh Sago became President of Athletics Federation of India.",
-  8: "Christie Coventry became the first female and first African IOC President.",
-  9: "PT Usha became the first female President of Indian Olympic Association.",
-  10: "Raghuram Iyer appointed CEO of Indian Olympic Association.",
-  11: "Poonam Gupta appointed Deputy Governor of RBI for 3 years.",
-  12: "Tuhin kanta Pandey became Chairperson of SEBI.",
-  13: "Subhanshu Shukla became first Indian astronaut to ISS with Axiom 4 Mission.",
-  14: "Kash Patel appointed Director of FBI.",
-  15: "Anju Rathi Rana became India’s first woman Law Secretary.",
-  16: "CS Shetty (SBI Chairman) elected Chairman of Indian Banks Association.",
-  17: "Dr. Mayank Sharma appointed Controller General of Defence Accounts.",
-  18: "Gyanesh Kumar appointed 26th CEC of India.",
-  19: "Vivek Joshi appointed as Election Commissioner.",
-  20: "Azimul Haque appointed CEO of Delhi Waqf Board.",
-  21: "Faiz Ahmed Kidwai appointed DG of Civil Aviation.",
-  22: "Sitashu Kotak appointed Batting Coach of Team India.",
-  23: "Sonali Mishra became first woman DG of RPF.",
-  24: "Shirley Ayorkor Botchwey became first African woman Commonwealth Secretary General.",
-  25: "Bhuvnesh Kumar appointed CEO of UIDAI (Aadhaar).",
-  26: "BR Gavai became 52nd Chief Justice of India.",
-  27: "BV Nagarathna set to become first female CJI in 2027.",
-  28: "Tayyab Ikram re-elected President of FIH.",
-  29: "Dr. Mangilal Jat appointed DG of ICAR.",
-  30: "Mirabai Chanu appointed Chairperson in Indian Weightlifting Federation.",
-  31: "Mosin Naqvi (Pakistan) appointed President of ACC.",
-  32: "Justice V Ramasubramanian appointed NHRC Chairperson.",
-  33: "Sanjay Malhotra appointed RBI Governor.",
-  34: "Justice Madan Lokur appointed Chairperson of UN International Justice Council.",
-  35: "Palle Ganga Reddy became first Chairman of National Turmeric Board.",
-  36: "Harshvardhan Agrawal became President of FICCI (founded 1927).",
-  37: "Dr. Ajay Kumar became UPSC Chairman, succeeding Preeti Sudan.",
-  38: "K Sanjay Murthy became new CAG of India.",
-  39: "Veldacy Urquiza became Secretary General of INTERPOL.",
-  40: "Ashish Khanna appointed DG of International Solar Alliance.",
-  41: "Vipin Kumar appointed Chairman of Airports Authority of India.",
-  42: "Noel Tata appointed Chairman of Tata Trusts.",
-  43: "Justice Suryakant appointed Executive Chairman of NALSA.",
-  44: "Justice Dinesh Maheshwari appointed Chairman of 23rd Law Commission.",
-  45: "Shubman Gill became new Test Captain of Indian men’s cricket team.",
-  46: "Cardinal Robert Francis Prevost appointed Pope of Catholic Church, Leo XIV.",
-  47: "Ram Mohan appointed Director of MPEDA."
+1: { text: "Gyanendra Pratap Singh was appointed as DG of CRPF, the largest CAPF of India.", image: "" },
+2: { text: "Vineet Joshi has become the new Chairman of CBSE.", image: "" },
+3: { text: "Manish Singhal appointed as Secretary General of ASSOCHAM.", image: "" },
+4: { text: "Devarjit Saikia appointed as BCCI Secretary. BCCI was founded in 1928.", image: "" },
+5: { text: "Ajay Seth appointed as Finance Secretary.", image: "" },
+6: { text: "Ayushmann Khurrana named Fit India Icon by Union Sports Minister.", image: "" },
+7: { text: "Bahadur Singh Sago became President of Athletics Federation of India.", image: "" },
+8: { text: "Christie Coventry became the first female and first African IOC President.", image: "" },
+9: { text: "PT Usha became the first female President of Indian Olympic Association.", image: "" },
+10: { text: "Raghuram Iyer appointed CEO of Indian Olympic Association.", image: "" },
+11: { text: "Poonam Gupta appointed Deputy Governor of RBI for 3 years.", image: "" },
+12: { text: "Tuhin Kanta Pandey became Chairperson of SEBI.", image: "" },
+13: { text: "Subhanshu Shukla became first Indian astronaut to ISS with Axiom 4 Mission.", image: "" },
+14: { text: "Kash Patel appointed Director of FBI.", image: "" },
+15: { text: "Anju Rathi Rana became India’s first woman Law Secretary.", image: "" },
+16: { text: "CS Shetty (SBI Chairman) elected Chairman of Indian Banks Association.", image: "" },
+17: { text: "Dr. Mayank Sharma appointed Controller General of Defence Accounts.", image: "" },
+18: { text: "Gyanesh Kumar appointed 26th CEC of India.", image: "" },
+19: { text: "Vivek Joshi appointed as Election Commissioner.", image: "" },
+20: { text: "Azimul Haque appointed CEO of Delhi Waqf Board.", image: "" },
+21: { text: "Faiz Ahmed Kidwai appointed DG of Civil Aviation.", image: "" },
+22: { text: "Sitashu Kotak appointed Batting Coach of Team India.", image: "" },
+23: { text: "Sonali Mishra became first woman DG of RPF.", image: "" },
+24: { text: "Shirley Ayorkor Botchwey became first African woman Commonwealth Secretary General.", image: "" },
+25: { text: "Bhuvnesh Kumar appointed CEO of UIDAI (Aadhaar).", image: "" },
+26: { text: "BR Gavai became 52nd Chief Justice of India.", image: "" },
+27: { text: "BV Nagarathna set to become first female CJI in 2027.", image: "" },
+28: { text: "Tayyab Ikram re-elected President of FIH.", image: "" },
+29: { text: "Dr. Mangilal Jat appointed DG of ICAR.", image: "" },
+30: { text: "Mirabai Chanu appointed Chairperson in Indian Weightlifting Federation.", image: "" },
+31: { text: "Mosin Naqvi (Pakistan) appointed President of ACC.", image: "" },
+32: { text: "Justice V Ramasubramanian appointed NHRC Chairperson.", image: "" },
+33: { text: "Sanjay Malhotra appointed RBI Governor.", image: "" },
+34: { text: "Justice Madan Lokur appointed Chairperson of UN International Justice Council.", image: "" },
+35: { text: "Palle Ganga Reddy became first Chairman of National Turmeric Board.", image: "" },
+36: { text: "Harshvardhan Agrawal became President of FICCI (founded 1927).", image: "" },
+37: { text: "Dr. Ajay Kumar became UPSC Chairman, succeeding Preeti Sudan.", image: "" },
+38: { text: "K Sanjay Murthy became new CAG of India.", image: "" },
+39: { text: "Veldacy Urquiza became Secretary General of INTERPOL.", image: "" },
+40: { text: "Ashish Khanna appointed DG of International Solar Alliance.", image: "" },
+41: { text: "Vipin Kumar appointed Chairman of Airports Authority of India.", image: "" },
+42: { text: "Noel Tata appointed Chairman of Tata Trusts.", image: "" },
+43: { text: "Justice Suryakant appointed Executive Chairman of NALSA.", image: "" },
+44: { text: "Justice Dinesh Maheshwari appointed Chairman of 23rd Law Commission.", image: "" },
+45: { text: "Shubman Gill became new Test Captain of Indian men’s cricket team.", image: "" },
+46: { text: "Cardinal Robert Francis Prevost appointed Pope of Catholic Church, Leo XIV.", image: "" },
+47: { text: "Ram Mohan appointed Director of MPEDA.", image: "" }
+ 
 };
-
-function showExplanation(num) {
-  const q = questions[num];
-  const e = explanations[num] || "No explanation provided.";
-  if (!q) return;
-  document.getElementById('explanationContent').innerHTML = `
-    <p><strong>Q${num}.</strong> ${q.text}</p>
-    <p><strong>Options:</strong></p>
-    <ul>
-      ${q.options.map((opt, idx) => `<li>${idx+1}. ${opt}</li>`).join('')}
-    </ul>
-    <p><strong>Correct Answer:</strong> ${q.options[parseInt(q.correct)-1]}</p>
-    <hr>
-    <p><strong>Explanation:</strong> ${e}</p>
-  `;
-  // Show modal (requires bootstrap js)
-  const modalEl = document.getElementById('explanationModal');
-  if (modalEl && typeof bootstrap !== 'undefined') {
-    new bootstrap.Modal(modalEl).show();
-  }
-}
-
-// Export for module usage (if using modules)
-if (typeof module !== 'undefined') {
-  module.exports = { totalQuestions, questions, explanations, showExplanation };
-}
