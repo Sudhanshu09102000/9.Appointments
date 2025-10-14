@@ -3,7 +3,59 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title> Appointments </title>
+  <title> Mock </title>
+  
+  <style>
+  body {
+  background-color: #f8f9fa;
+}
+
+#question-container {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.option {
+  margin-bottom: 10px;
+}
+
+.explanation-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+
+#helpContent a.btn {
+  background: linear-gradient(90deg, #0d6efd, #6f42c1);
+  color: #fff;
+  transition: all 0.3s ease;
+}
+#helpContent a.btn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg, #6f42c1, #0d6efd);
+}
+
+#helpContent img {
+  transition: transform 0.3s ease;
+}
+#helpContent img:hover {
+  transform: scale(1.05);
+}
+#helpContent a.btn {
+  background: linear-gradient(90deg, #0d6efd, #6f42c1);
+  color: #fff;
+  transition: all 0.3s ease;
+}
+#helpContent a.btn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg, #6f42c1, #0d6efd);
+}
+
+  </style>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     :root{--accent:#0d6efd;--muted:#6c757d}
@@ -48,6 +100,14 @@
 </head>
 <body>
 
+  
+  
+  
+  
+  
+  
+  
+  
 <div class="container py-4">
   <div> <center> <b> Appointments </b></center> </div>
   <div class="topbar mb-3">
@@ -411,8 +471,16 @@ function submitTest(isAuto=false){
       <p><strong>Q${i}.</strong> ${escapeHtml(q.text)}</p>
       <p><strong>Your Answer:</strong> ${escapeHtml(userAnsText)}</p>
       <p><strong>Correct Answer:</strong> ${escapeHtml(correctAnsText)}</p>
-      ${explanations[i] ? `<button class="btn btn-sm btn-light mt-2" onclick="showExplanation(${i})">View Explanation</button>` : ''}
-    </div></div>`;
+    ${explanations[i] ? `<button class="btn btn-sm btn-light mt-2" onclick="showExplanation(${i})">View Explanation</button>` : ''}
+<div class="mt-2">
+  <a href="https://www.google.com/search?q=${encodeURIComponent(questions[i].text)}" 
+     target="_blank" 
+     class="btn btn-sm btn-primary">
+     🔍 Search it on Google
+  </a>
+</div>
+
+       </div></div>`;
   }
 
   document.getElementById('scoreContent').innerHTML = scHtml;
@@ -515,17 +583,59 @@ document.addEventListener("keydown", function (e) {
   }
 });
   
-  // Help button functionality
+// Help button functionality with Google Search and image support
+// Help button functionality with image and Google search support
 document.getElementById('helpBtn').addEventListener('click', () => {
+  const q = questions[currentQuestion];
   const e = explanations[currentQuestion];
-  if (e && e.text) {
-    document.getElementById('helpContent').innerHTML = `<p>${e.text}</p>`;
+
+  if (q) {
+    // Create Google Search URL
+    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(q.text)}`;
+
+    // Start building help content
+    let helpHTML = `
+      <p><strong>Q${currentQuestion}.</strong> ${q.text}</p>
+      <hr>
+    `;
+
+    // Add explanation text if available
+    if (e && e.text) {
+      helpHTML += `<p>${e.text}</p>`;
+    } else {
+      helpHTML += `<p>No help available for this question.</p>`;
+    }
+
+    // Add image if available
+    if (e && e.image) {
+      helpHTML += `
+        <div class="text-center my-3">
+          <img src="${e.image}" alt="Explanation Image" class="img-fluid rounded shadow-sm" 
+               style="max-height:250px; object-fit:contain; border:2px solid #ddd; border-radius:10px;">
+        </div>
+      `;
+    }
+
+    // Add the Google Search button
+    helpHTML += `
+      <div class="text-center mt-4">
+        <a href="${searchUrl}" target="_blank" 
+           class="btn btn-primary shadow-sm" 
+           style="border-radius:12px; padding:10px 20px; font-weight:600;">
+          🔍 Search it on Google
+        </a>
+      </div>
+    `;
+
+    // Insert content into modal and show it
+    document.getElementById('helpContent').innerHTML = helpHTML;
     new bootstrap.Modal(document.getElementById('helpModal')).show();
   } else {
     document.getElementById('helpContent').innerHTML = `<p>No help available for this question.</p>`;
     new bootstrap.Modal(document.getElementById('helpModal')).show();
   }
 });
+
 
 
 </script>
