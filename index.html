@@ -96,6 +96,87 @@
       .option-label{flex-basis:100%}
       .qbtn{width:40px;height:40px}
     }
+  
+  
+  /* ---------- instant feedback UI (paste in <style> block) ---------- */
+
+/* overlay blink on body */
+body.blink-green::before,
+body.blink-red::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2000;
+  opacity: 0;
+}
+
+body.blink-green::before {
+  background: linear-gradient(180deg, rgba(40,167,69,0.14), rgba(40,167,69,0.08));
+  animation: blinkGreen 900ms ease-out;
+}
+
+body.blink-red::before {
+  background: linear-gradient(180deg, rgba(220,53,69,0.14), rgba(220,53,69,0.08));
+  animation: blinkRed 900ms ease-out;
+}
+
+@keyframes blinkGreen {
+  0% { opacity: 0; transform: scale(1); }
+  10% { opacity: 1; transform: scale(1.01); }
+  70% { opacity: 0.35; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1); }
+}
+@keyframes blinkRed {
+  0% { opacity: 0; transform: scale(1); }
+  10% { opacity: 1; transform: scale(1.01); }
+  70% { opacity: 0.35; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+/* option state visuals */
+.option-label.correct {
+  border-color: #28a745 !important;
+  background: linear-gradient(90deg, rgba(40,167,69,0.12), rgba(40,167,69,0.04));
+  box-shadow: 0 6px 20px rgba(40,167,69,0.08);
+  transform: translateY(-2px);
+}
+
+.option-label.wrong {
+  border-color: #dc3545 !important;
+  background: linear-gradient(90deg, rgba(220,53,69,0.08), rgba(220,53,69,0.03));
+  box-shadow: 0 6px 20px rgba(220,53,69,0.06);
+  transform: translateY(-2px);
+}
+
+/* show icons in badge-pos when feedback shown */
+.option-label .badge-pos {
+  transition: transform 0.22s ease;
+}
+.option-label.correct .badge-pos {
+  background: #28a745; color: #fff;
+}
+.option-label.wrong .badge-pos {
+  background: #dc3545; color: #fff;
+}
+
+/* disable option clicks while showing feedback */
+.options.disabled .option-label { pointer-events: none; opacity: 0.94; }
+
+/* subtle pulse of correct/wrong label */
+@keyframes pulseGood {
+  0% { box-shadow: 0 0 0 0 rgba(40,167,69,0.18); }
+  70% { box-shadow: 0 0 0 14px rgba(40,167,69,0); }
+  100% { box-shadow: 0 0 0 0 rgba(40,167,69,0); }
+}
+@keyframes pulseBad {
+  0% { box-shadow: 0 0 0 0 rgba(220,53,69,0.18); }
+  70% { box-shadow: 0 0 0 14px rgba(220,53,69,0); }
+  100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); }
+}
+.option-label.correct { animation: pulseGood 900ms ease-out; }
+.option-label.wrong { animation: pulseBad 900ms ease-out; }
+
   </style>
 </head>
 <body>
@@ -238,6 +319,8 @@ let currentQuestion = 1;
 const answers = {}; // { [qno]: { selectedMetaId: number|null, review: boolean }}
 let totalSeconds = 0;
 let timerInterval = null;
+  
+  
 
 /* ---------- helpers ---------- */
 function shuffleArray(arr){
@@ -335,24 +418,51 @@ function renderQuestion(num){
 
   // attach click handlers
   document.querySelectorAll('#options .option-label').forEach(lbl=>{
-    lbl.addEventListener('click', ()=>{
-      const origId = parseInt(lbl.dataset.originalId,10);
-      const pos = parseInt(lbl.dataset.pos,10);
-      const cur = answers[currentQuestion];
-      // toggle selection
-      if(cur && cur.selectedMetaId === origId){
-        // deselect
-        delete answers[currentQuestion];
-        lbl.classList.remove('selected');
-      } else {
-        // clear previous
-        document.querySelectorAll('#options .option-label').forEach(l => l.classList.remove('selected'));
-        lbl.classList.add('selected');
-        answers[currentQuestion] = { selectedMetaId: origId, review: (answers[currentQuestion]?.review===true) };
-      }
-      updateNav(currentQuestion);
+  lbl.addEventListener('click', ()=>{
+    // prevent feedback if this question already answered by feedback
+    if (answers[currentQuestion] && answers[currentQuestion].answeredFeedback) return;
+
+    const origId = parseInt(lbl.dataset.originalId,10); // original option index (0-based)
+    const pos = parseInt(lbl.dataset.pos,10);
+
+    // preserve review flag if present
+    const prev = answers[currentQuestion] || { selectedMetaId: null, review: false };
+
+    // store selection and mark that feedback shown for this question
+    answers[currentQuestion] = { selectedMetaId: origId, review: !!prev.review, answeredFeedback: true };
+
+    // mark selected visually immediately
+    document.querySelectorAll('#options .option-label').forEach(l => {
+      l.classList.remove('selected'); // clear previous selection visual
+      // keep .correct/.wrong if present from earlier - we clear only selected class
     });
+    lbl.classList.add('selected');
+
+    // compute correct original index for this question
+    const q = questions[currentQuestion];
+    const origCorrectId = parseInt(q.correct,10) - 1;
+
+    // find the corresponding label element for the correct option
+    const correctLbl = Array.from(document.querySelectorAll('#options .option-label'))
+      .find(l => parseInt(l.dataset.originalId,10) === origCorrectId);
+
+    const isCorrect = (origId === origCorrectId);
+
+    // show instant feedback (visual + screen blink)
+    showInstantFeedback(isCorrect, lbl, correctLbl);
+
+    // update nav badge now that answer exists
+    updateNav(currentQuestion);
+
+    // OPTIONAL: if you want to auto-move to next question after short delay, uncomment below:
+    /*
+    setTimeout(()=>{
+      if (currentQuestion < totalQuestions) loadQuestion(currentQuestion + 1);
+    }, 1200);
+    */
   });
+});
+
 
   // mark current in nav
   document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('current'));
@@ -636,6 +746,45 @@ document.getElementById('helpBtn').addEventListener('click', () => {
   }
 });
 
+/* ---------- helper: instant feedback (paste into your <script>) ---------- */
+
+function showInstantFeedback(isCorrect, selectedLbl, correctLbl) {
+  // disable clicking while feedback is showing
+  const optionsWrap = document.getElementById('options');
+  optionsWrap.classList.add('disabled');
+
+  // add classes for visuals
+  if (isCorrect) {
+    selectedLbl.classList.add('correct');
+    // decorate badge with tick
+    selectedLbl.querySelector('.badge-pos').innerHTML = '✔';
+    document.body.classList.add('blink-green');
+  } else {
+    selectedLbl.classList.add('wrong');
+    selectedLbl.querySelector('.badge-pos').innerHTML = '✖';
+    document.body.classList.add('blink-red');
+
+    // highlight correct option
+    if (correctLbl) {
+      correctLbl.classList.add('correct');
+      correctLbl.querySelector('.badge-pos').innerHTML = '✔';
+    }
+  }
+
+  // small glow + revert after delay
+  setTimeout(() => {
+    // remove overlay classes
+    document.body.classList.remove('blink-green','blink-red');
+
+    // remove disabled but keep final styling (so user can still see)
+    optionsWrap.classList.remove('disabled');
+
+    // NOTE: we keep .correct/.wrong classes so UI shows result until next question loads.
+    // If you prefer to auto-clear them after a while, uncomment below:
+    // selectedLbl.classList.remove('correct','wrong');
+    // if (correctLbl) correctLbl.classList.remove('correct');
+  }, 900); // match animation duration
+}
 
 
 </script>
